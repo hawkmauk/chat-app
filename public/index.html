@@ -4,6 +4,13 @@
         <title>Chat App</title>
     </head>
     <body>
-        <h1>Chat App</h1>
+        <h1>Socket Chat App</h1>
+        <form id='message-form'> 
+            <input name='message' placeholder='message'>
+            <button id='send'>send</button>
+        </form>
+        <button id='send-location'>Send location</button>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/js/chat.js"></script>
     </body>
 </html>
