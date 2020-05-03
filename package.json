@@ -4,6 +4,7 @@
   "description": "Realtime chat app using socket io",
   "main": "index.js",
   "scripts": {
+    "start": "env-cmd -f ./config/prod.env node src/index.js",
     "dev": "env-cmd -f ./config/dev.env nodemon src/index.js -e js,hbs",
     "test": "env-cmd -f ./config/test.env echo \"Error: no test specified\" && exit 1"
   },
