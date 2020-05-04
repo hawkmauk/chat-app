@@ -4,6 +4,9 @@ const path = require('path')
 const socketio = require('socket.io')
 const Filter = require('bad-words')
 
+const { generateMessage, generateLocationMessage } = require('./utils/messages')
+const { addUser, removeUser, getUser, getUsersInRoom } = require('./utils/users')
+
 const app = express()
 const server = http.createServer(app)
 const io = socketio(server)
@@ -24,29 +27,53 @@ io.on('connection', (socket) => {
 
     console.log('New websocket connection')
 
-    socket.emit('message', 'Welocme to the chat app')
-    socket.broadcast.emit('message','A new user has joined')
+    socket.on('join', ({ username, room }, callback) => {
+
+        const { error, user } = addUser({ id: socket.id, username, room })
+
+        if(error){
+            return callback(error)
+        }
+        
+        socket.join(user.room)
+
+        socket.emit('message', generateMessage('Welcome to the chat app'))
+        socket.broadcast.to(user.room).emit('message',generateMessage(`${user.username} has joined`))
+
+        callback()
+    })
 
     socket.on('message', (message, callback) => {
+
+        const user = getUser(socket.id)
+        console.log(user)
+
         const filter = new Filter()
 
         if (filter.isProfane(message)){
             return callback('Profanity is not allowed')
         }
 
-        io.emit('message', message)
+        io.to(user.room).emit('message', generateMessage(message))
         callback()
     })
 
     socket.on('disconnect', () => {
         console.log('User has disconnected')
-        io.emit('message', 'User has left the chat')
+
+        const user = removeUser(socket.id)
+
+        if(user){
+            io.to(user.room).emit('message', generateMessage(`${user.username} has left`))
+        }
     })
 
     socket.on('sendLocation', (coords, callback) => {
-        socket.broadcast.emit('message',`https://google.com/maps?q=${coords.latitude},${coords.longitude}`)
+        const message = generateLocationMessage(`https://google.com/maps?q=${coords.latitude},${coords.longitude}`)
+        socket.broadcast.emit('locationMessage',message)
         callback('Location shared!')
     })
+
 })
 
 module.exports = server
