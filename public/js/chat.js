@@ -54,6 +54,7 @@ $locationButton.addEventListener('click', () => {
 socket.on('message', (message, callback) => {
 
     const html = Mustache.render(messageTemplate, {
+        username: message.username,
         message: message.text,
         createdAt: moment(message.createdAt).format('h:mm a')
     })
@@ -63,6 +64,7 @@ socket.on('message', (message, callback) => {
 socket.on('locationMessage', (message, callback) => {
 
     const html = Mustache.render(locationMessageTemplate, {
+        username: message.username,
         url: message.url,
         createdAt: moment(message.createdAt).format('h:mm a')
     })
