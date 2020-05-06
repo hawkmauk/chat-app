@@ -18,7 +18,8 @@
     "express": "4.17.1",
     "bad-words": "3.0.3",
     "path": "0.12.7",
-    "http": "0.0.1-security"
+    "http": "0.0.1-security",
+    "socket.io": "2.3.0"
   },
   "devDependencies": {
     "env-cmd": "^10.1.0",
